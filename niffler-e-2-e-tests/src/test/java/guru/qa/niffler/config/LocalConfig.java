@@ -9,6 +9,21 @@ enum LocalConfig implements Config {
   }
 
   @Override
+  public String authUrl() {
+    return "";
+  }
+
+  @Override
+  public String getewayUrl() {
+    return "";
+  }
+
+  @Override
+  public String userDataUrl() {
+    return "";
+  }
+
+  @Override
   public String spendUrl() {
     return "http://127.0.0.1:8093/";
   }

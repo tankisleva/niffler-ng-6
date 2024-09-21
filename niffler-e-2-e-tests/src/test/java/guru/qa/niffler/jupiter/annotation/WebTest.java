@@ -1,5 +1,6 @@
 package guru.qa.niffler.jupiter.annotation;
 
+import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.jupiter.extension.UsersQueueExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -11,7 +12,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ExtendWith({
+        BrowserExtension.class,
         UsersQueueExtension.class
 })
-public @interface Users {
+public @interface WebTest {
 }
