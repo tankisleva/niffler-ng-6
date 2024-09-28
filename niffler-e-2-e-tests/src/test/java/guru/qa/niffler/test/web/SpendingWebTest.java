@@ -16,7 +16,7 @@ public class SpendingWebTest {
   private static final Config CFG = Config.getInstance();
 
   @User(
-          username = "duck",
+          username = "duck1",
           categories = @Category(
                   isArchive = false
           ),

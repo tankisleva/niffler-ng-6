@@ -2,9 +2,12 @@ package guru.qa.niffler.jupiter.extension;
 
 import com.github.javafaker.Faker;
 import guru.qa.niffler.api.SpendApiClient;
+import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.service.CategoryDbClient;
+import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.extension.*;
@@ -16,35 +19,9 @@ public class CategoryExtension implements
         ParameterResolver {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
-    private final SpendApiClient spendApiClient = new SpendApiClient();
+    private final CategoryDbClient categoryDbClient = new CategoryDbClient();
 
-//    @Override
-//    public void beforeEach(ExtensionContext context) {
-//        AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Category.class)
-//                .ifPresent(anno ->{
-//                    String name = RandomDataUtils.randomCategoryName();
-//                    CategoryJson categoryJson = new CategoryJson(
-//                            null,
-//                            anno.name().isEmpty() ? name : anno.name(),
-//                            anno.username(),
-//                            false
-//                    );
-//
-//                    CategoryJson createCategory = spendApiClient.addCategory(categoryJson);
-//
-//                    if (anno.isArchive()) {
-//                        CategoryJson archivedCategory = new CategoryJson(
-//                                createCategory.id(),
-//                                createCategory.name(),
-//                                createCategory.username(),
-//                                true
-//                        );
-//                        createCategory = spendApiClient.updateCategory(archivedCategory);
-//                    }
-//
-//                    context.getStore(NAMESPACE).put(context.getUniqueId(), createCategory);
-//                });
-//    }
+
 
     @Override
     public void beforeEach(ExtensionContext context) {
@@ -60,18 +37,7 @@ public class CategoryExtension implements
                             false
                      );
 
-                     CategoryJson createCategory = spendApiClient.addCategory(categoryJson);
-
-                     if (categoryAnno.isArchive()) {
-                        CategoryJson archivedCategory = new CategoryJson(
-                                createCategory.id(),
-                                createCategory.name(),
-                                userAnno.username(),
-                                true
-                        );
-                        createCategory = spendApiClient.updateCategory(archivedCategory);
-                     }
-
+                     CategoryJson createCategory = categoryDbClient.createCategoryJson(categoryJson);
                      context.getStore(NAMESPACE).put(context.getUniqueId(), createCategory);
                     }
                 });
@@ -89,16 +55,11 @@ public class CategoryExtension implements
 
     @Override
     public void afterTestExecution(ExtensionContext context) {
-        CategoryJson categoryJson = context.getStore(NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
-
-        if (categoryJson.archived()) {
-            CategoryJson archivedCategory = new CategoryJson(
-                    categoryJson.id(),
-                    categoryJson.name(),
-                    categoryJson.username(),
-                    true
-            );
-            spendApiClient.updateCategory(archivedCategory);
+        CategoryJson category = context.getStore(NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
+        if (category != null && !category.archived()) {
+            categoryDbClient.deleteCategory(CategoryEntity.fromJson(category));
         }
     }
+
+
 }

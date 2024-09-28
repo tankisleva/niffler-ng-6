@@ -8,6 +8,10 @@ import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.entity.SpendEntity;
 import guru.qa.niffler.model.SpendJson;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 public class SpendDbClient {
 
     private final SpendDao spendDao = new SpendDaoJdbc();
@@ -22,5 +26,18 @@ public class SpendDbClient {
         return SpendJson.fromEntity(
                 spendDao.create(spendEntity)
         );
+    }
+
+
+    public Optional<SpendEntity> findSpendById(UUID id) {
+        return spendDao.findSpendById(id);
+    }
+
+    public List<SpendEntity> findAllSpendsByUsername(String username) {
+        return spendDao.findAllByUsername(username);
+    }
+
+    public void deleteSpend(SpendEntity spend) {
+        spendDao.deleteSpend(spend);
     }
 }
