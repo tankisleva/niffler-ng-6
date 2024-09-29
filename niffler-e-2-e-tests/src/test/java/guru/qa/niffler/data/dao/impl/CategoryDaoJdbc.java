@@ -143,17 +143,6 @@ public class CategoryDaoJdbc implements CategoryDao {
         }
     }
 
-    private CategoryEntity getGeneratedCategory(PreparedStatement ps, CategoryEntity category) throws SQLException {
-        try (ResultSet rs = ps.getGeneratedKeys()) {
-            if (rs.next()) {
-                UUID generatedKey = rs.getObject("id", UUID.class);
-                category.setId(generatedKey);
-                return category;
-            } else {
-                throw new SQLException("Can't find id in ResultSet");
-            }
-        }
-    }
 
     private CategoryEntity mapRowToCategoryEntity(ResultSet rs) throws SQLException {
         CategoryEntity ce = new CategoryEntity();
