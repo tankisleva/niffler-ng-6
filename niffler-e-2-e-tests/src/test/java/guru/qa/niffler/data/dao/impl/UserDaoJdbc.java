@@ -59,20 +59,17 @@ public class UserDaoJdbc implements UserDao {
 
     @Override
     public void delete(UserEntity user) {
-        deleteById(user.getId());
-    }
-
-    public void deleteById(UUID id) {
         String sql = String.format("DELETE FROM %s WHERE id = ?", USER_TABLE);
         try (Connection connection = Databases.connection(CFG.userdataJdbcUrl());
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
-            ps.setObject(1, id);
+            ps.setObject(1, user.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     private UserEntity mapResultSetToUserEntity(ResultSet rs) throws SQLException {
         UserEntity user = new UserEntity();
